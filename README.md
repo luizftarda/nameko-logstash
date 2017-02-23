@@ -6,7 +6,8 @@
 
 ```bash
 git clone https://github.com/jdsolucoes/nameko-logstash.git
-cp nameko-logstash/nameko_logstash.py /your/project/folder/
+cd nameko-logstash
+python setup.py install
 ```
 
 
