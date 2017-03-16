@@ -27,13 +27,14 @@ class LogstashDependency(DependencyProvider):
         self.port = config.get('PORT', 5959)
         self.log_level = getattr(
             logging, config.get('LOG_LEVEL', 'INFO'))
-        self.loggers = {}
+        self.logger_by_service_name = dict()
 
     def get_dependency(self, *args, **kwargs):
         worker_ctx = args[0]
-        logger = logging.getLogger(worker_ctx.service_name)
-        if not self.loggers.get(logger):
-            self.loggers[logger] = logger
+        service_name = worker_ctx.service_name
+        if not self.logger_by_service_name.get(service_name):
+            logger = logging.getLogger(service_name)
+            self.logger_by_service_name[service_name] = logger
             logger.setLevel(self.log_level)
 
             formatter = logging.Formatter(self.log_formatter)
@@ -46,5 +47,5 @@ class LogstashDependency(DependencyProvider):
                 file_handler.setFormatter(formatter)
                 logger.addHandler(file_handler)
 
-        return self.loggers[logger]
+        return self.logger_by_service_name[service_name]
 
